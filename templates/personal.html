@@ -1,0 +1,75 @@
+{% import 'bootstrap/wtf.html' as wtf %}
+{% include "header.html" %}
+
+<!-- Page Header -->
+<header class="masthead"
+        style="background-image: url('{{ url_for('static', filename='img/personal-bg.jpg') }}')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1 class="mx-auto">Квартира {{ current_user.apartment }}</h1>
+                    <span class="subheading">{{ current_user.name }} {{ current_user.lastname }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flashes content">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <p>Email: {{ current_user.email }}
+                {% if not current_user.email_check %}
+                    <span class="text-danger float-right">Не подтверждён</span></p>
+                    <div class="clearfix">
+                        <a class="btn btn-primary float-left" href="{{ url_for('check_email') }}">Подтвердить</a>
+                    </div>
+                {% else %}
+                    <span class="text-success float-right">Подтверждён</span>
+                {% endif %}
+            <p>Телефон: {{ current_user.phone }}</p>
+            {% if current_user.email_check %}
+                <hr>
+                <p><b>Передать показания</b></p>
+                {{ wtf.quick_form(form, novalidate=True, button_map={'submit': 'primary'}) }}
+            {% endif %}
+            {% if current_user.received_notif | length %}
+                <hr>
+                <p><b>Уведомления - {{ current_user.received_notif | length }}</b></p>
+            {% for notif in current_user.received_notif | reverse %}
+                <div class="media comment">
+                    <div>
+                        <img class="rounded-circle" width="50px" alt="avatar"
+                             src='{{ notif.n_author.email | gravatar }}'/>
+                    </div>
+                    <div class="media-body ml-2">
+                        <div class="user_name"> {{ notif.n_author.name }} {{ notif.n_author.lastname }}<br>
+                            <span class="text-secondary">{{ notif.date }}</span>
+                        </div>
+                        <p class="commentText">{{ notif.text | safe }}</p>
+                            <a class="text-danger"
+                               href="{{ url_for('delete_notif', n_id=notif.id) }}">✘ удалить</a>
+
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<hr>
+
+{% include "footer.html" %}

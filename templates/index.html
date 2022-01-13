@@ -2,16 +2,14 @@
 
 <!-- Page Header -->
 <header class="masthead"
-        style="background-image: url('https://images.unsplash.com/photo-1470092306007-055b6797ca72?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80')">
+        style="background-image: url('{{ url_for('static', filename='img/smolenka.jpg')}}')">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="site-heading">
-                    <h1>Mike's Blog</h1>
-                    <span class="subheading">A collection of random musings.
-                    <a href="{{ url_for('db_copy') }}">Migrate</a>
-                    <a href="{{url_for('delete_user') }}">✘</a>
+                    <h1 class="mx-auto">НОВОСМОЛЕНСКАЯ 2</h1>
+                    <span class="subheading">Товарищество собственников жилья
                     </span>
                 </div>
             </div>
@@ -24,17 +22,6 @@
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
 
-        {% for user in all_users | reverse %}
-            <div class="post-preview">
-                    <h2 class="post-title">
-                        {{user.name}}
-                    </h2>
-                    <h3 class="post-subtitle">
-                        {{user.email}}
-                    </h3>
-            </div>
-            <hr>
-            {% endfor %}
 
             {% for post in all_posts | reverse %}
             <div class="post-preview">
@@ -46,11 +33,11 @@
                         {{post.subtitle}}
                     </h3>
                 </a>
-                <p class="post-meta">Posted by
-                    <a href="#">{{post.author.name}}</a>
-                    on {{post.date}}
-                    {% if current_user.id == 1 %}
-                    <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
+                <p class="post-meta">Опубликовано
+                    <a href="#">{{post.author.name}} {{ post.author.lastname }}</a>
+                    {{post.date}}
+                    {% if current_user.is_authenticated and (current_user.level > 3 or current_user.id == post.author_id) %}
+                    <a class="text-danger" href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
                     {% endif %}
                 </p>
             </div>
@@ -59,9 +46,9 @@
 
 
             <!-- New Post -->
-            {% if current_user.id == 1 %}
+            {% if current_user.is_authenticated and current_user.level > 2 %}
             <div class="clearfix">
-                <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
+                <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Создать новую запись</a>
             </div>
             {% endif %}
         </div>

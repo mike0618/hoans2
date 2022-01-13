@@ -1,0 +1,44 @@
+{% include "header.html" %}
+
+<!-- Page Header -->
+<header class="masthead"
+        style="background-image: url('{{ url_for('static', filename='img/admin-bg.jpg')}}')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1 class="mx-auto">ADMIN PAGE</h1>
+                    <span class="subheading">Раздел администрирования
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            {% for user in all_users %}
+                {% if user.level <= current_user.level %}
+            <div class="post-preview">
+                    <h3 class="post-subtitle font-weight-light">
+                        <a class="text-decoration-none" href="{{ url_for('edit_user', user_id=user.id) }}">
+                        {{user.apartment}} {{user.name}} {{user.lastname}} {{ user.phone }}
+                        </a>
+                        <a class="align-right float-right" href="{{ url_for('note_user', user_id=user.id) }}">
+                        <i class="font-weight-light fa fa-envelope align-right" aria-hidden="true"></i>
+                        </a>
+                    </h3>
+            </div>
+            <hr>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<hr>
+
+{% include "footer.html" %}

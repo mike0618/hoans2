@@ -1,3 +1,2 @@
-# Mike-Blog
-Blog built with Flask
-Python, Flask, WTForms, SQLAlchemy, Bootstrap, CKeditor
+# hoans2
+Homeowners association's "Novosmolenskaya 2" website

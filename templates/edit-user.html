@@ -1,0 +1,60 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% include "header.html" %}
+
+<!-- Page Header -->
+<header class="masthead"
+        style="background-image: url('{{ url_for('static', filename='img/admin-bg.jpg') }}')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>EDIT USER</h1>
+                    <span class="subheading">Редактировать учетную запись пользователя</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+            <p>Зарегистрирован {{ user.date }}</p>
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+            {% if user.received_notif | length %}
+                <hr>
+                <p><b>Уведомления - {{ user.received_notif | length }}</b></p>
+                {% for notif in user.received_notif | reverse %}
+                    <div class="media comment">
+                        <div>
+                            <img class="rounded-circle" width="50px" alt="avatar"
+                                 src='{{ notif.n_author.email | gravatar }}'/>
+                        </div>
+                        <div class="media-body ml-2">
+                            <div class="user_name"> {{ notif.n_author.name }} {{ notif.n_author.lastname }}<br>
+                                <span class="text-secondary">{{ notif.date }}</span>
+                            </div>
+                            <p class="commentText">{{ notif.text | safe }}</p>
+                            <a class="text-danger"
+                               href="{{ url_for('delete_notif', n_id=notif.id, user_id=user.id, admin=True) }}">✘ удалить</a>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if current_user.level == 5 %}
+                <hr>
+                <div class="clearfix">
+                    <a class="btn btn-danger float-right" href="{{ url_for('delete_user', user_id=user.id) }}">Удалить
+                        пользователя</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" %}

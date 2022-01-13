@@ -10,8 +10,8 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="page-heading">
-                    <h1>Войти</h1>
-                    <span class="subheading">Добро пожаловать!</span>
+                    <h1>Новый пароль</h1>
+                    <span class="subheading">Придумайте новый надёжный пароль!</span>
                 </div>
             </div>
         </div>
@@ -31,7 +31,6 @@
             {% endif %}
             {% endwith %}
             {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-            <p><a href="{{ url_for('forgot') }}">Я не помню пароль</a></p>
         </div>
     </div>
 </div>
