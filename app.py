@@ -1,4 +1,4 @@
-from flask import abort, Flask, render_template, redirect, url_for, flash, request
+from flask import abort, Flask, render_template, redirect, jsonify, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import datetime
@@ -54,7 +54,12 @@ gravatar = Gravatar(app,
 
 
 # CONFIGURE TABLES
-class User(UserMixin, db.Model):
+class AbsTable():
+    def to_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+
+class User(UserMixin, db.Model, AbsTable):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     level = db.Column(db.Integer, nullable=False)
@@ -74,7 +79,7 @@ class User(UserMixin, db.Model):
                                   back_populates='recipient')
 
 
-class BlogPost(db.Model):
+class BlogPost(db.Model, AbsTable):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
     author = relationship('User', back_populates='posts')
@@ -87,7 +92,7 @@ class BlogPost(db.Model):
     post_comments = relationship('Comment', cascade="all, delete", back_populates='post')
 
 
-class Comment(db.Model):
+class Comment(db.Model, AbsTable):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(25), nullable=False)
@@ -98,7 +103,7 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
 
 
-class Notification(db.Model):
+class Notification(db.Model, AbsTable):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(25), nullable=False)
@@ -497,8 +502,17 @@ def reset_pass(email, code):
     return redirect(url_for('get_all_posts'))
 
 #
-
-
+@app.route('/all')
+@admin_only
+def get_json():
+    users = User.query.all()
+    posts = BlogPost.query.all()
+    comments = Comment.query.all()
+    notes = Notification.query.all()
+    return jsonify(users=[user.to_dict() for user in users],
+                   posts=[post.to_dict() for post in posts],
+                   comments=[comment.to_dict() for comment in comments],
+                   notes=[note.to_dict() for note in notes])
 
 
 # if __name__ == "__main__":
