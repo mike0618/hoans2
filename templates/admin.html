@@ -21,12 +21,12 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-            {% if current_user.level == 5 %}
-            <div class="clearfix">
-                <a class="btn btn-primary float-right" href="{{url_for('get_json')}}">DB to JSON</a>
-            </div>
-                <hr>
-            {% endif %}
+{#            {% if current_user.level == 5 %}#}
+{#            <div class="clearfix">#}
+{#                <a class="btn btn-primary float-right" href="{{url_for('get_json')}}">DB to JSON</a>#}
+{#            </div>#}
+{#                <hr>#}
+{#            {% endif %}#}
             {% for user in all_users %}
                 {% if user.level <= current_user.level %}
             <div class="post-preview">
