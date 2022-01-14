@@ -68,7 +68,7 @@ class User(UserMixin, db.Model, AbsTable):
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     email_check = db.Column(db.BOOLEAN)
-    phone = db.Column(db.String(15), unique=True, nullable=False)
+    phone = db.Column(db.String(15), unique=True, nullable=False) # сдела форматирование
     password = db.Column(db.String(150), nullable=False)
     date = db.Column(db.String(25), nullable=False)
     posts = relationship('BlogPost', cascade="all, delete", back_populates='author')
@@ -114,7 +114,7 @@ class Notification(db.Model, AbsTable):
     recipient = relationship('User', foreign_keys=[recipient_id], back_populates='received_notif')
 
 
-db.create_all()
+# db.create_all()
 
 
 # Strip invalid/dangerous tags/attributes
@@ -128,7 +128,7 @@ def clean_html(content):
     cleaned = clean(content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
     return cleaned
 
-
+# < &lt;
 # User Loader
 @login_manager.user_loader
 def load_user(user_id):
@@ -206,9 +206,9 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    email = request.args.get('email')
-    if email:
-        form.email.data = email
+    # email = request.args.get('email')
+    # if email:
+    #     form.email.data = email
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if not user:
@@ -384,7 +384,7 @@ email_codes = {}
 
 @app.route("/personal/email")
 def check_email():
-    email_codes.clear()
+    # email_codes.clear()
     email_codes[current_user.id] = randint(1000, 9999)
     content = f"<p><b>Для подтверждения перейдите по ссылке:</b></p>" \
               f"<a href='{request.url}/{email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
@@ -502,17 +502,17 @@ def reset_pass(email, code):
     return redirect(url_for('get_all_posts'))
 
 #
-@app.route('/all')
-@admin_only
-def get_json():
-    users = User.query.all()
-    posts = BlogPost.query.all()
-    comments = Comment.query.all()
-    notes = Notification.query.all()
-    return jsonify(users=[user.to_dict() for user in users],
-                   posts=[post.to_dict() for post in posts],
-                   comments=[comment.to_dict() for comment in comments],
-                   notes=[note.to_dict() for note in notes])
+# @app.route('/all')
+# @admin_only
+# def get_json():
+#     users = User.query.all()
+#     posts = BlogPost.query.all()
+#     comments = Comment.query.all()
+#     notes = Notification.query.all()
+#     return jsonify(users=[user.to_dict() for user in users],
+#                    posts=[post.to_dict() for post in posts],
+#                    comments=[comment.to_dict() for comment in comments],
+#                    notes=[note.to_dict() for note in notes])
 
 
 @app.route('/favicon.ico')

@@ -32,7 +32,7 @@
                     </div>
                 {% endif %}
 
-                {{ ckeditor.load(pkg_type='basic') }}
+                {{ ckeditor.load(pkg_type='standard') }}
                 {{ ckeditor.config(name='text') }}
                 {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
 
