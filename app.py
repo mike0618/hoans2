@@ -29,7 +29,12 @@ def inject_year():
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///blog.db"
+db_url = os.environ.get("DATABASE_URL")
+if db_url:
+    db_url = db_url.replace("://", "ql://", 1)
+else:
+    db_url = "sqlite:///blog.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -184,7 +189,11 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        flash('Подтвердите EMAIL чтобы активировать аккаунт.')
+        if current_user.id == 1:
+            current_user.level = 5
+            db.session.commit()
+        else:
+            flash('Подтвердите EMAIL чтобы активировать аккаунт.')
         return redirect(url_for('personal'))
     return render_template("register.html", form=form)
 
@@ -486,6 +495,10 @@ def reset_pass(email, code):
         return render_template('new-pass.html', form=form)
     email_codes.pop(email, None)
     return redirect(url_for('get_all_posts'))
+
+#
+
+
 
 
 # if __name__ == "__main__":
