@@ -1,4 +1,4 @@
-from flask import abort, Flask, render_template, redirect, jsonify, url_for, flash, request
+from flask import abort, Flask, render_template, send_from_directory, redirect, jsonify, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import datetime
@@ -513,6 +513,12 @@ def get_json():
                    posts=[post.to_dict() for post in posts],
                    comments=[comment.to_dict() for comment in comments],
                    notes=[note.to_dict() for note in notes])
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static', 'img'),
+                               'favicon.ico', mimetype='image/png')
 
 
 # if __name__ == "__main__":
