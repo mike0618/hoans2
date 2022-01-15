@@ -1,7 +1,7 @@
 from flask import abort, Flask, render_template, send_from_directory, redirect, jsonify, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -133,6 +133,11 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+# Current datetime
+def date_time():
+    return (datetime.now() + timedelta(hours=3)).isoformat(' ', 'seconds')
+
+
 # Protect routes
 def admin_only(f):
     @wraps(f)
@@ -176,9 +181,11 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         email = form.email.data
+        apartment = form.apartment.data
         if User.query.filter_by(email=email).first():
             flash("Этот email уже зарегистрирован")
             return redirect(url_for('login', email=email))
+
         user_hash = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=16)
         new_user = User(name=form.name.data,
                         lastname=form.lastname.data,
@@ -188,7 +195,7 @@ def register():
                         email=email,
                         email_check=False,
                         password=user_hash,
-                        date=datetime.now().isoformat(' ', 'seconds'))
+                        date=date_time())
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -242,7 +249,7 @@ def show_post(post_id):
             flash('Вы не можете комментировать.')
             return redirect(url_for('contact'))
         new_comment = Comment(text=clean_html(form.text.data),
-                              date=datetime.now().isoformat(' ', 'seconds'),
+                              date=date_time(),
                               c_author=current_user,
                               post=requested_post)
         db.session.add(new_comment)
@@ -298,7 +305,7 @@ def add_new_post():
                             body=clean_html(form.body.data),
                             img_url=form.img_url.data,
                             author=current_user,
-                            date=datetime.now().isoformat(' ', 'seconds'))
+                            date=date_time())
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
@@ -368,7 +375,7 @@ def personal():
                       f"<p><b>Квартира: {current_user.apartment}</b></p>" \
                       f"<p><b>Холодная вода: {form.cold_water.data}</b></p>" \
                       f"<p><b>Горячая вода: {form.hot_water.data}</b></p>" \
-                      f"<p><b>Дата: {datetime.now().isoformat(' ', 'seconds')}</b></p>"
+                      f"<p><b>Дата: {date_time()}</b></p>"
             send_email('mishau7@gmail.com', f'Показания квартиры {current_user.apartment} с сайта Новосмоленская 2',
                        content)
             flash("Показания переданы успешно.", "info")
@@ -453,7 +460,7 @@ def note_user(user_id):
     form = MessageForm()
     user = User.query.get(user_id)
     if form.validate_on_submit():
-        note = Notification(date=datetime.now().isoformat(' ', 'seconds'),
+        note = Notification(date=date_time(),
                             text=clean_html(form.text.data),
                             author_id=current_user.id,
                             recipient_id=user_id)
