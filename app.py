@@ -440,7 +440,7 @@ def edit_user(user_id):
         user.level = level
         user.name = form.name.data
         user.lastname = form.lastname.data
-        user.phone = form.phone.data
+        user.phone = format_phone(form.phone.data)
         user.apartment = form.apartment.data
         if current_user.level == 5:
             user.email = form.email.data
