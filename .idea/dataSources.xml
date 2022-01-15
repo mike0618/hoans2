@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://ec2-54-217-195-234.eu-west-1.compute.amazonaws.com:5432/d9t9vl7nj5a2ht</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="SQLite - blog.db" uuid="9247cc89-36a8-4f8a-b405-bc8908cf18b0">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/blog.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
