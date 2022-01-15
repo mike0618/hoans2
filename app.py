@@ -14,6 +14,7 @@ import smtplib
 from my_conf_google import EMAIL, SMTP_HOST
 from email.message import EmailMessage
 import os
+import re
 from random import randint
 
 app = Flask(__name__)
@@ -138,6 +139,15 @@ def date_time():
     return (datetime.now() + timedelta(hours=3)).isoformat(' ', 'seconds')
 
 
+def format_phone(phone):
+    phone = re.sub('\D', '', phone)
+    if len(phone) == 10:
+        return f'+7{phone}'
+    if len(phone) == 11:
+        return f'+7{phone[1:]}'
+    return phone
+
+
 # Protect routes
 def admin_only(f):
     @wraps(f)
@@ -184,12 +194,11 @@ def register():
         if User.query.filter_by(email=email).first():
             flash("Этот email уже зарегистрирован")
             return redirect(url_for('login', email=email))
-
         user_hash = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=16)
         new_user = User(name=form.name.data,
                         lastname=form.lastname.data,
                         apartment=form.apartment.data,
-                        phone=form.phone.data,
+                        phone=format_phone(form.phone.data),
                         level=1,
                         email=email,
                         email_check=False,
@@ -198,11 +207,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        if current_user.id == 1:
-            current_user.level = 5
-            db.session.commit()
-        else:
-            flash('Подтвердите EMAIL чтобы активировать аккаунт.')
+        flash('Подтвердите EMAIL, чтобы активировать аккаунт.')
         return redirect(url_for('personal'))
     return render_template("register.html", form=form)
 
