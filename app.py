@@ -181,7 +181,6 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         email = form.email.data
-        apartment = form.apartment.data
         if User.query.filter_by(email=email).first():
             flash("Этот email уже зарегистрирован")
             return redirect(url_for('login', email=email))

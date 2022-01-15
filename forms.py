@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, TelField, DecimalField
-from wtforms.validators import DataRequired, URL, Email, Length
+from wtforms.validators import DataRequired, URL, Email, Length, NumberRange
 from flask_ckeditor import CKEditorField
 
 
@@ -14,7 +14,7 @@ class CreatePostForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    apartment = IntegerField("Квартира", validators=[DataRequired()])
+    apartment = IntegerField("Квартира", validators=[DataRequired(), NumberRange(1, 222)])
     lastname = StringField("Фамилия", validators=[DataRequired()])
     name = StringField("Имя", validators=[DataRequired()])
     phone = TelField("Телефон", validators=[DataRequired()])
@@ -40,8 +40,8 @@ class MessageForm(FlaskForm):
 
 
 class MetersForm(FlaskForm):
-    cold_water = DecimalField("Холодная вода", validators=[DataRequired()])
-    hot_water = DecimalField("Горячая вода", validators=[DataRequired()])
+    cold_water = DecimalField("Холодная вода", validators=[DataRequired(), NumberRange(0)])
+    hot_water = DecimalField("Горячая вода", validators=[DataRequired(), NumberRange(0)])
     submit = SubmitField("Передать")
 
 
