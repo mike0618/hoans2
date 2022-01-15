@@ -68,7 +68,7 @@ class User(UserMixin, db.Model, AbsTable):
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     email_check = db.Column(db.BOOLEAN)
-    phone = db.Column(db.String(15), unique=True, nullable=False) # сдела форматирование
+    phone = db.Column(db.String(15), unique=True, nullable=False) # сделать форматирование
     password = db.Column(db.String(150), nullable=False)
     date = db.Column(db.String(25), nullable=False)
     posts = relationship('BlogPost', cascade="all, delete", back_populates='author')
@@ -113,9 +113,7 @@ class Notification(db.Model, AbsTable):
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipient = relationship('User', foreign_keys=[recipient_id], back_populates='received_notif')
 
-
 # db.create_all()
-
 
 # Strip invalid/dangerous tags/attributes
 def clean_html(content):
@@ -169,7 +167,7 @@ def news_writer(f):
 # ROUTES
 @app.route('/')
 def get_all_posts():
-    posts = BlogPost.query.all()
+    posts = BlogPost.query.order_by(BlogPost.id).all()
     return render_template("index.html", all_posts=posts)
 
 
@@ -206,9 +204,9 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    # email = request.args.get('email')
-    # if email:
-    #     form.email.data = email
+    email = request.args.get('email')
+    if email:
+        form.email.data = email
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if not user:
