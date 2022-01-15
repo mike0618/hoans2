@@ -267,7 +267,7 @@ header.masthead .site-heading {
   color: white;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1200px) {
   header.masthead .page-heading,
   header.masthead .post-heading,
   header.masthead .site-heading {
@@ -296,7 +296,7 @@ header.masthead .site-heading .subheading {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1200px) {
   header.masthead .page-heading h1,
   header.masthead .site-heading h1 {
     font-size: 80px;
@@ -331,7 +331,7 @@ header.masthead .post-heading .meta a {
   color: #fff;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1200px) {
   header.masthead .post-heading h1 {
     font-size: 55px;
   }
@@ -377,7 +377,7 @@ header.masthead .post-heading .meta a {
   color: #0085A1;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1200px) {
   .post-preview > a > .post-title {
     font-size: 36px;
   }
