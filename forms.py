@@ -48,7 +48,7 @@ class MetersForm(FlaskForm):
 class UserForm(RegisterForm):
     password = None
     email_check = BooleanField("EMAIL подтверждён")
-    level = IntegerField("Уровень доступа", validators=[DataRequired()])
+    level = IntegerField("Уровень доступа", validators=[DataRequired(), NumberRange(1, 5)])
     submit = SubmitField('Применить')
 
 
