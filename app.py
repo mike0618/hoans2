@@ -440,10 +440,11 @@ def edit_user(user_id):
         user.level = level
         user.name = form.name.data
         user.lastname = form.lastname.data
-        user.email = form.email.data
-        user.email_check = form.email_check.data
         user.phone = form.phone.data
         user.apartment = form.apartment.data
+        if current_user.level == 5:
+            user.email = form.email.data
+            user.email_check = form.email_check.data
         db.session.commit()
         return redirect(url_for('edit_user', user_id=user.id))
     return render_template('edit-user.html', form=form, user=user)
