@@ -124,8 +124,8 @@ def clean_html(content):
                     'li', 'ol', 'p', 'pre', 'q', 's', 'small', 'strike', 'strong',
                     'span', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th',
                     'thead', 'tr', 'tt', 'u', 'ul', 'iframe']
-    allowed_attrs = {'a': ['href', 'target', 'title'], 'img': ['src', 'alt', 'width', 'height'], 'iframe':
-        ['width', 'height', 'src', 'title', 'frameborder', 'allow', 'allowfullscreen']}
+    allowed_attrs = {'a': ['href', 'target', 'title'], 'img': ['src', 'alt', 'width', 'height'],
+                     'iframe': ['src', 'title', 'frameborder', 'allow', 'allowfullscreen']}
     cleaned = clean(content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
     return cleaned
 
@@ -467,11 +467,8 @@ def note_user(user_id):
     form = MessageForm()
     user = User.query.get(user_id)
     if form.validate_on_submit():
-        text = clean_html(form.text.data)
-        if current_user.level == 5:
-            text = form.text.data
         note = Notification(date=date_time(),
-                            text=text,
+                            text=clean_html(form.text.data),
                             author_id=current_user.id,
                             recipient_id=user_id)
         db.session.add(note)
