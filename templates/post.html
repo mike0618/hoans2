@@ -32,7 +32,7 @@
                     </div>
                 {% endif %}
 
-                {{ ckeditor.load(pkg_type='standard') }}
+                {{ ckeditor.load(pkg_type='basic') }}
                 {{ ckeditor.config(name='text') }}
                 {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
 
@@ -50,12 +50,14 @@
                             </div>
                             <div class="media-body ml-2">
                                 <div class="user_name"> {{ comment.c_author.name }} {{ comment.c_author.lastname }}<br>
-                                <span class="text-secondary">{{ comment.date }}</span>
+                                    <span class="text-secondary">{{ comment.date }}</span>
                                 </div>
                                 <p class="commentText">{{ comment.text | safe }}
-                                {% if current_user.is_authenticated and (current_user.level > 3 or current_user.id == comment.author_id) %}
-                                    <a class="text-danger" href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id) }}">✘ удалить</a>
-                                {% endif %}
+                                    {% if current_user.is_authenticated and (current_user.level > 3 or current_user.id == comment.author_id) %}
+                                        <a class="text-danger"
+                                           href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id) }}">✘
+                                            удалить</a>
+                                    {% endif %}
 
                                 </p>
                             </div>
@@ -68,4 +70,5 @@
 </article>
 
 <hr>
+
 {% include "footer.html" %}
