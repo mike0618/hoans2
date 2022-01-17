@@ -119,12 +119,12 @@ class Notification(db.Model, AbsTable):
 
 # Strip invalid/dangerous tags/attributes
 def clean_html(content):
-    allowed_tags = ['a', 'abbr', 'acronym', 'address', 'b', 'br', 'div', 'dl', 'dt',
+    allowed_tags = ['a', 'abbr', 'acronym', 'address', 'b', 'br', 'dl', 'dt',
                     'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img',
                     'li', 'ol', 'p', 'pre', 'q', 's', 'small', 'strike', 'strong',
                     'span', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th',
                     'thead', 'tr', 'tt', 'u', 'ul', 'iframe']
-    allowed_attrs = {'a': ['href', 'target', 'title'], 'img': ['src', 'alt', 'width', 'height'],
+    allowed_attrs = {'a': ['href', 'target', 'title'], 'img': ['src', 'alt'],
                      'iframe': ['src', 'title', 'frameborder', 'allow', 'allowfullscreen']}
     cleaned = clean(content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
     return cleaned
@@ -254,7 +254,10 @@ def show_post(post_id):
         if current_user.level < 2:
             flash('Вы не можете комментировать.')
             return redirect(url_for('contact'))
-        new_comment = Comment(text=clean_html(form.text.data),
+        text = clean_html(form.text.data)
+        if current_user.level < 4:
+            text = text.replace('iframe', '')
+        new_comment = Comment(text=text,
                               date=date_time(),
                               c_author=current_user,
                               post=requested_post)
@@ -293,7 +296,8 @@ def contact():
                   f"<p><b>Телефон: {current_user.phone}</b></p><p>" \
                   f"<p><b>Зарегистрирован: {current_user.date}</b></p>" \
                   f"<b>Квартира: {current_user.apartment}</b></p>" \
-                  f"<p><b>Уровень доступа: {current_user.level}</b></p> {clean_html(form.text.data)}"
+                  f"<p><b>Уровень доступа: {current_user.level}</b></p>" \
+                  f"{clean_html(form.text.data).replace('iframe', '')}"
         send_email('9084073@mail.ru', 'Сообщение с сайта Новосмоленская 2', content)
         flash('Ваше сообщение отправлено успешно.')
         return redirect(url_for('contact'))
@@ -382,8 +386,8 @@ def personal():
                       f"<p><b>Холодная вода: {form.cold_water.data}</b></p>" \
                       f"<p><b>Горячая вода: {form.hot_water.data}</b></p>" \
                       f"<p><b>Дата: {date_time()}</b></p>"
-            send_email('mishau7@gmail.com', f'Показания квартиры {current_user.apartment} с сайта Новосмоленская 2',
-                       content)
+            send_email('ns2buh@mail.ru', f'Показания квартиры {current_user.apartment} '
+                                         f'с сайта Новосмоленская 2',content)
             flash("Показания переданы успешно.", "info")
             return redirect(url_for('personal'))
         return render_template('personal.html', form=form)
