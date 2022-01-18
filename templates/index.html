@@ -22,6 +22,12 @@
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
 
+            <!-- New Post -->
+            {% if current_user.is_authenticated and current_user.level > 2 %}
+            <div class="clearfix">
+                <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Создать новую запись</a>
+            </div>
+            {% endif %}
 
             {% for post in all_posts | reverse %}
             <div class="post-preview">
@@ -44,13 +50,6 @@
             <hr>
             {% endfor %}
 
-
-            <!-- New Post -->
-            {% if current_user.is_authenticated and current_user.level > 2 %}
-            <div class="clearfix">
-                <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Создать новую запись</a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
