@@ -45,11 +45,9 @@
                 {% endif %}
             </div>
             <p>Телефон: {{ current_user.phone }}</p>
-            {% if current_user.email_check %}
-                <hr>
-                <p><b>Передать показания</b></p>
-                {{ wtf.quick_form(form, novalidate=True, button_map={'submit': 'primary'}) }}
-            {% endif %}
+            <hr>
+            <p><b>Передать показания</b></p>
+            {{ wtf.quick_form(form, novalidate=True, button_map={'submit': 'primary'}) }}
             {% if current_user.received_notif | length %}
                 <hr>
                 <p><b>Уведомления - {{ current_user.received_notif | length }}</b></p>

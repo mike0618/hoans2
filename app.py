@@ -381,6 +381,7 @@ def personal():
         if form.validate_on_submit():
             content = f"<p><b>Имя: {current_user.name} {current_user.lastname}</b></p>" \
                       f"<p><b>Email: {current_user.email}</b></p>" \
+                      f"<p><b>Email проверен: {current_user.email_check}</b></p>" \
                       f"<p><b>Телефон: {current_user.phone}</b></p>" \
                       f"<p><b>Зарегистрирован: {current_user.date}</b></p>" \
                       f"<p><b>Квартира: {current_user.apartment}</b></p>" \
@@ -400,7 +401,6 @@ email_codes = {}
 
 @app.route("/personal/email")
 def check_email():
-    # email_codes.clear()
     email_codes[current_user.id] = randint(1000, 9999)
     content = f"<p><b>Для подтверждения перейдите по ссылке:</b></p>" \
               f"<a href='{request.url}/{email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
