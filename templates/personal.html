@@ -31,6 +31,7 @@
                     </div>
                 {% endif %}
             {% endwith %}
+        <h4>Дата регистрации: {{ current_user.date }}</h4>
             <p>Email: {{ current_user.email }}
                 {% if not current_user.email_check %}
                     <span class="text-danger float-right">Не подтверждён</span>
@@ -46,11 +47,11 @@
             </div>
             <p>Телефон: {{ current_user.phone }}</p>
             <hr>
-            <p><b>Передать показания</b></p>
+            <h4>Передать показания</h4>
             {{ wtf.quick_form(form, novalidate=True, button_map={'submit': 'primary'}) }}
             {% if current_user.received_notif | length %}
                 <hr>
-                <p><b>Уведомления - {{ current_user.received_notif | length }}</b></p>
+                <h4>Уведомления - {{ current_user.received_notif | length }}</h4>
                 {% for notif in current_user.received_notif | reverse %}
                     <div class="media comment">
                         <div>

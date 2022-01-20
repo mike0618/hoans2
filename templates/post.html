@@ -39,7 +39,7 @@
                 <!--           Comments Area -->
                 <hr>
                 <div class="page-header">
-                    <p>Комментарии - {{ post.post_comments | length }}</p>
+                    <h4>Комментарии - {{ post.post_comments | length }}</h4>
                 </div>
                 <div class="commentBox">
                     {% for comment in post.post_comments | reverse %}
