@@ -415,7 +415,8 @@ def verify_email(code):
         email_codes.pop(current_user.id, None)
         if not current_user.email_check:
             current_user.email_check = True
-            current_user.level = 2
+            if current_user.level == 1:
+                current_user.level = 2
             db.session.commit()
     return redirect(url_for('personal'))
 
@@ -528,6 +529,9 @@ def change_email():
             flash('Этот email уже зарегистрирован.', 'error')
             return redirect(url_for('change_email'))
         current_user.email = email
+        current_user.email_check = False
+        if current_user.level == 2:
+            current_user.level = 1
         db.session.commit()
         return redirect(url_for('personal'))
     return render_template('change-email.html', form=form)

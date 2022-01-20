@@ -33,14 +33,17 @@
             {% endwith %}
             <p>Email: {{ current_user.email }}
                 {% if not current_user.email_check %}
-                    <span class="text-danger float-right">Не подтверждён</span></p>
-                    <div class="clearfix">
-                        <a class="btn btn-danger float-left" href="{{ url_for('change_email') }}">Изменить</a>
-                        <a class="btn btn-primary float-right" href="{{ url_for('check_email') }}">Подтвердить</a>
-                    </div>
+                    <span class="text-danger float-right">Не подтверждён</span>
                 {% else %}
                     <span class="text-success float-right">Подтверждён</span>
                 {% endif %}
+            </p>
+            <div class="clearfix">
+                <a class="btn btn-danger float-left" href="{{ url_for('change_email') }}">Изменить</a>
+                {% if not current_user.email_check %}
+                    <a class="btn btn-primary float-right" href="{{ url_for('check_email') }}">Подтвердить</a>
+                {% endif %}
+            </div>
             <p>Телефон: {{ current_user.phone }}</p>
             {% if current_user.email_check %}
                 <hr>
@@ -50,23 +53,23 @@
             {% if current_user.received_notif | length %}
                 <hr>
                 <p><b>Уведомления - {{ current_user.received_notif | length }}</b></p>
-            {% for notif in current_user.received_notif | reverse %}
-                <div class="media comment">
-                    <div>
-                        <img class="rounded-circle" width="50px" alt="avatar"
-                             src='{{ notif.n_author.email | gravatar }}'/>
-                    </div>
-                    <div class="media-body ml-2">
-                        <div class="user_name"> {{ notif.n_author.name }} {{ notif.n_author.lastname }}<br>
-                            <span class="text-secondary">{{ notif.date }}</span>
+                {% for notif in current_user.received_notif | reverse %}
+                    <div class="media comment">
+                        <div>
+                            <img class="rounded-circle" width="50px" alt="avatar"
+                                 src='{{ notif.n_author.email | gravatar }}'/>
                         </div>
-                        <p class="commentText">{{ notif.text | safe }}</p>
+                        <div class="media-body ml-2">
+                            <div class="user_name"> {{ notif.n_author.name }} {{ notif.n_author.lastname }}<br>
+                                <span class="text-secondary">{{ notif.date }}</span>
+                            </div>
+                            <p class="commentText">{{ notif.text | safe }}</p>
                             <a class="text-danger"
                                href="{{ url_for('delete_notif', n_id=notif.id) }}">✘ удалить</a>
 
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
             {% endif %}
         </div>
     </div>
