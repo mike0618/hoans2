@@ -299,6 +299,7 @@ def contact():
                   f"<p><b>Уровень доступа: {current_user.level}</b></p>" \
                   f"{clean_html(form.text.data).replace('iframe', '')}"
         send_email('9084073@mail.ru', 'Сообщение с сайта Новосмоленская 2', content)
+        send_email('mishau7@gmail.com', 'Сообщение с сайта Новосмоленская 2', content)
         flash('Ваше сообщение отправлено успешно.')
         return redirect(url_for('contact'))
     return render_template("contact.html", form=form)
@@ -516,6 +517,20 @@ def reset_pass(email, code):
         return render_template('new-pass.html', form=form)
     email_codes.pop(email, None)
     return redirect(url_for('get_all_posts'))
+
+
+@app.route("/email/change", methods=['GET', 'POST'])
+def change_email():
+    form = EmailForm()
+    if form.validate_on_submit() and current_user.is_authenticated:
+        email = form.email.data
+        if User.query.filter_by(email=email).first():
+            flash('Этот email уже зарегистрирован.', 'error')
+            return redirect(url_for('change_email'))
+        current_user.email = email
+        db.session.commit()
+        return redirect(url_for('personal'))
+    return render_template('change-email.html', form=form)
 
 #
 # @app.route('/all')
