@@ -404,16 +404,18 @@ email_codes = {}
 
 @app.route("/personal/email")
 def check_email():
-    email_codes[current_user.id] = randint(1000, 9999)
+    email_codes[current_user.id] = str(randint(1000, 9999))
     content = f"<p><b>Для подтверждения перейдите по ссылке:</b></p>" \
-              f"<a target='_blank' href='{request.url}/{email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
+              f"<a target='_blank' href='{request.url}/check?code={email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
     send_email(current_user.email, "Подтверждение email для сайта Новосмоленская 2", content)
     flash('Ссылка для подтверждения отправлена на ваш EMAIL.')
     return redirect(url_for('personal'))
 
 
-@app.route("/personal/email/<int:code>")
-def verify_email(code):
+@app.route("/personal/email/check")
+def verify_email():
+    code = request.args.get('code')
+    print(code, email_codes.get(current_user.id))
     if email_codes.get(current_user.id) == code:
         email_codes.pop(current_user.id, None)
         if not current_user.email_check:
