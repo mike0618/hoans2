@@ -2,7 +2,7 @@
 
 <!-- Page Header -->
 <header class="masthead"
-        style="background-image: url('{{ url_for('static', filename='img/admin-bg.jpg')}}')">
+        style="background-image: url('{{ url_for('static', filename='img/admin-bg.jpg') }}')">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
@@ -21,25 +21,21 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-{#            {% if current_user.level == 5 %}#}
-{#            <div class="clearfix">#}
-{#                <a class="btn btn-primary float-right" href="{{url_for('get_json')}}">DB to JSON</a>#}
-{#            </div>#}
-{#                <hr>#}
-{#            {% endif %}#}
+            <h4>Пользователей - {{ all_users | length }}</h4>
+            <hr>
             {% for user in all_users %}
                 {% if user.level <= current_user.level %}
-            <div class="post-preview">
-                    <h3 class="post-subtitle font-weight-light">
-                        <a class="text-decoration-none" href="{{ url_for('edit_user', user_id=user.id) }}">
-                        {{user.apartment}} {{user.name}} {{user.lastname}} {{ user.phone }}
-                        </a>
-                        <a class="align-right float-right" href="{{ url_for('note_user', user_id=user.id) }}">
-                        <i class="font-weight-light fa fa-envelope align-right" aria-hidden="true"></i>
-                        </a>
-                    </h3>
-            </div>
-            <hr>
+                    <div class="post-preview">
+                        <h3 class="post-subtitle font-weight-light">
+                            <a class="text-decoration-none" href="{{ url_for('edit_user', user_id=user.id) }}">
+                                {{ user.apartment }} {{ user.name }} {{ user.lastname }} {{ user.phone }}
+                            </a>
+                            <a class="align-right float-right" href="{{ url_for('note_user', user_id=user.id) }}">
+                                <i class="font-weight-light fa fa-envelope align-right" aria-hidden="true"></i>
+                            </a>
+                        </h3>
+                    </div>
+                    <hr>
                 {% endif %}
             {% endfor %}
         </div>
