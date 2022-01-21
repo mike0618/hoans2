@@ -1,13 +1,13 @@
-from flask import abort, Flask, render_template, send_from_directory, redirect, jsonify, url_for, flash, request
+from flask import abort, Flask, render_template, send_from_directory, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import datetime, timedelta
-from time import sleep
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, UserForm, EmailForm, NewPassForm, LoginForm, CommentForm, MessageForm, MetersForm
+from forms import CreatePostForm, RegisterForm, UserForm, EmailForm, NewPassForm, LoginForm, CommentForm, MessageForm, \
+    MetersForm
 from flask_gravatar import Gravatar
 from bleach import clean
 from functools import wraps
@@ -57,7 +57,7 @@ gravatar = Gravatar(app,
 
 
 # CONFIGURE TABLES
-class AbsTable():
+class AbsTable:
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
@@ -71,7 +71,7 @@ class User(UserMixin, db.Model, AbsTable):
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     email_check = db.Column(db.BOOLEAN)
-    phone = db.Column(db.String(15), unique=True, nullable=False) # сделать форматирование
+    phone = db.Column(db.String(15), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     date = db.Column(db.String(25), nullable=False)
     posts = relationship('BlogPost', cascade="all, delete", back_populates='author')
@@ -116,6 +116,7 @@ class Notification(db.Model, AbsTable):
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipient = relationship('User', foreign_keys=[recipient_id], back_populates='received_notif')
 
+
 # db.create_all()
 
 # Strip invalid/dangerous tags/attributes
@@ -130,7 +131,7 @@ def clean_html(content):
     cleaned = clean(content, tags=allowed_tags, attributes=allowed_attrs, strip=True)
     return cleaned
 
-# < &lt;
+
 # User Loader
 @login_manager.user_loader
 def load_user(user_id):
@@ -310,7 +311,8 @@ def contact():
 @news_writer
 def add_new_post():
     form = CreatePostForm(
-        img_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Новосмоленские_башни.jpg/1280px-Новосмоленские_башни.jpg')
+        img_url='https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/'
+                'Новосмоленские_башни.jpg/1280px-Новосмоленские_башни.jpg')
     if form.validate_on_submit():
         new_post = BlogPost(title=form.title.data,
                             subtitle=form.subtitle.data,
@@ -390,7 +392,7 @@ def personal():
                       f"<p><b>Горячая вода: {form.hot_water.data}</b></p>" \
                       f"<p><b>Дата: {date_time()}</b></p>"
             send_email('ns2buh@mail.ru', f'Показания квартиры {current_user.apartment} '
-                                         f'с сайта Новосмоленская 2',content)
+                                         f'с сайта Новосмоленская 2', content)
             flash("Показания переданы успешно.", "info")
             return redirect(url_for('personal'))
         return render_template('personal.html', form=form)
@@ -412,7 +414,6 @@ def check_email():
 
 @app.route("/personal/email/<int:code>")
 def verify_email(code):
-    sleep(3)
     if email_codes.get(current_user.id) == code:
         email_codes.pop(current_user.id, None)
         if not current_user.email_check:
@@ -505,7 +506,6 @@ def forgot():
 
 @app.route("/forgot/<email>/<int:code>", methods=['GET', 'POST'])
 def reset_pass(email, code):
-    sleep(3)
     if email_codes.get(email) == code:
         user = User.query.filter_by(email=email).first()
         form = NewPassForm()
@@ -540,25 +540,11 @@ def change_email():
         return redirect(url_for('personal'))
     return render_template('change-email.html', form=form)
 
-#
-# @app.route('/all')
-# @admin_only
-# def get_json():
-#     users = User.query.all()
-#     posts = BlogPost.query.all()
-#     comments = Comment.query.all()
-#     notes = Notification.query.all()
-#     return jsonify(users=[user.to_dict() for user in users],
-#                    posts=[post.to_dict() for post in posts],
-#                    comments=[comment.to_dict() for comment in comments],
-#                    notes=[note.to_dict() for note in notes])
-
 
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static', 'img'),
                                'favicon.ico', mimetype='image/png')
-
 
 # if __name__ == "__main__":
 # app.run(host='0.0.0.0', port=1234)
