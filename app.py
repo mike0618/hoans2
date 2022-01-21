@@ -403,7 +403,7 @@ email_codes = {}
 def check_email():
     email_codes[current_user.id] = randint(1000, 9999)
     content = f"<p><b>Для подтверждения перейдите по ссылке:</b></p>" \
-              f"<a target=”_blank href='{request.url}/{email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
+              f"<a target='_blank' href='{request.url}/{email_codes.get(current_user.id)}'>ПОДТВЕРДИТЬ</a>"
     send_email(current_user.email, "Подтверждение email для сайта Новосмоленская 2", content)
     flash('Ссылка для подтверждения отправлена на ваш EMAIL.')
     return redirect(url_for('personal'))
@@ -493,7 +493,7 @@ def forgot():
             return redirect(url_for('login'))
         email_codes[user.email] = randint(100000000, 999999999)
         content = f"<p><b>Для восстановления пароля перейдите по одноразовой ссылке:</b></p>" \
-                  f"<a target=”_blank href='{request.url}/{user.email}/{email_codes.get(user.email)}'>" \
+                  f"<a target='_blank' href='{request.url}/{user.email}/{email_codes.get(user.email)}'>" \
                   f"СОЗДАТЬ НОВЫЙ ПАРОЛЬ</a>"
         send_email(user.email, "Восстановление пароля для сайта Новосмоленская 2", content)
         flash('Ссылка для восстановления отправлена на ваш Email.')
