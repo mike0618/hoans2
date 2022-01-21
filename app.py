@@ -496,9 +496,9 @@ def forgot():
         if not user:
             flash('Этот email не зарегистрирован.', 'error')
             return redirect(url_for('login'))
-        email_codes[user.email] = randint(100000000, 999999999)
+        email_codes[user.email] = str(randint(100000000, 999999999))
         content = f"<p><b>Для восстановления пароля перейдите по одноразовой ссылке:</b></p>" \
-                  f"<a target='_blank' href='{request.url}/{user.email}/{email_codes.get(user.email)}'>" \
+                  f"<a target='_blank' href='{request.url}/reset?email={user.email}&code={email_codes.get(user.email)}'>" \
                   f"СОЗДАТЬ НОВЫЙ ПАРОЛЬ</a>"
         send_email(user.email, "Восстановление пароля для сайта Новосмоленская 2", content)
         flash('Ссылка для восстановления отправлена на ваш Email.')
@@ -506,8 +506,10 @@ def forgot():
     return render_template('forgot.html', form=form)
 
 
-@app.route("/forgot/<email>/<int:code>", methods=['GET', 'POST'])
-def reset_pass(email, code):
+@app.route("/forgot/reset", methods=['GET', 'POST'])
+def reset_pass():
+    email = request.args.get('email')
+    code = request.args.get('code')
     if email_codes.get(email) == code:
         user = User.query.filter_by(email=email).first()
         form = NewPassForm()
