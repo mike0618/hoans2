@@ -2,6 +2,7 @@ from flask import abort, Flask, render_template, send_from_directory, redirect, 
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import datetime, timedelta
+from time import sleep
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -411,6 +412,7 @@ def check_email():
 
 @app.route("/personal/email/<int:code>")
 def verify_email(code):
+    sleep(3)
     if email_codes.get(current_user.id) == code:
         email_codes.pop(current_user.id, None)
         if not current_user.email_check:
@@ -503,6 +505,7 @@ def forgot():
 
 @app.route("/forgot/<email>/<int:code>", methods=['GET', 'POST'])
 def reset_pass(email, code):
+    sleep(3)
     if email_codes.get(email) == code:
         user = User.query.filter_by(email=email).first()
         form = NewPassForm()
