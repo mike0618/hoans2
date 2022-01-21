@@ -429,7 +429,7 @@ def verify_email():
 @app.route("/admin")
 @moderator
 def admin():
-    users = User.query.order_by(User.apartment).all()
+    users = User.query.order_by(User.apartment).filter(User.level <= current_user.level).all()
     return render_template('admin.html', all_users=users)
 
 
