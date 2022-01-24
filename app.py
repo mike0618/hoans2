@@ -1,3 +1,5 @@
+from email.header import Header
+
 from flask import abort, Flask, render_template, send_from_directory, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -276,8 +278,8 @@ def about():
 
 def send_email(to, subj, html_content):
     msg = EmailMessage()
-    msg.policy.max_line_length = 128
-    msg['Subject'] = subj
+    h = Header(subj, 'utf-8', 200)
+    msg['Subject'] = h
     msg['From'] = EMAIL
     msg['To'] = to
     msg.add_alternative(html_content, subtype='html')
