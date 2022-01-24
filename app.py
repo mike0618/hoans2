@@ -383,6 +383,7 @@ def personal():
     if current_user.is_authenticated:
         form = MetersForm()
         if form.validate_on_submit():
+            subj = f'Показания квартиры {current_user.apartment} с сайта Новосмоленская 2'
             content = f"<p><b>Имя: {current_user.name} {current_user.lastname}</b></p>" \
                       f"<p><b>Email: {current_user.email}</b></p>" \
                       f"<p><b>Email проверен: {current_user.email_check}</b></p>" \
@@ -392,8 +393,7 @@ def personal():
                       f"<p><b>Холодная вода: {form.cold_water.data}</b></p>" \
                       f"<p><b>Горячая вода: {form.hot_water.data}</b></p>" \
                       f"<p><b>Дата: {date_time()}</b></p>"
-            send_email('ns2buh@mail.ru', f'Показания квартиры {current_user.apartment} '
-                                         f'с сайта Новосмоленская 2', content)
+            send_email('ns2buh@mail.ru', subj, content)
             flash("Показания переданы успешно.", "info")
             return redirect(url_for('personal'))
         return render_template('personal.html', form=form)
