@@ -276,6 +276,7 @@ def about():
 
 def send_email(to, subj, html_content):
     msg = EmailMessage()
+    msg.policy.max_line_length = 128
     msg['Subject'] = subj
     msg['From'] = EMAIL
     msg['To'] = to
