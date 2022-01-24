@@ -302,6 +302,7 @@ def contact():
                   f"{clean_html(form.text.data).replace('iframe', '')}"
         send_email('9084073@mail.ru', 'Сообщение с сайта Новосмоленская 2', content)
         send_email('mishau7@gmail.com', 'Сообщение с сайта Новосмоленская 2', content)
+        send_email('ns2noreply@gmail.com', 'Сообщение с сайта Новосмоленская 2', content)
         flash('Ваше сообщение отправлено успешно.')
         return redirect(url_for('contact'))
     return render_template("contact.html", form=form)
