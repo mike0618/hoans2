@@ -283,7 +283,6 @@ def send_email(to, subj, html_content):
     msg['From'] = EMAIL
     msg['To'] = to
     msg.add_alternative(html_content, subtype='html')
-    msg.add_header()
     with smtplib.SMTP(SMTP_HOST, port=587) as conn:
         conn.starttls()
         conn.login(user=EMAIL, password=os.environ.get('PASS'))
