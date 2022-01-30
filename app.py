@@ -1,6 +1,3 @@
-from email.header import Header
-from email.policy import default
-
 from flask import abort, Flask, render_template, send_from_directory, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -278,7 +275,7 @@ def about():
 
 
 def send_email(to, subj, html_content):
-    msg = EmailMessage(policy=default.clone(max_line_length=200))
+    msg = EmailMessage()
     msg['Subject'] = subj
     msg['From'] = EMAIL
     msg['To'] = to

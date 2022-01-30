@@ -26,7 +26,7 @@
             {% for user in all_users %}
                 <div class="post-preview">
                     <h3 class="post-subtitle font-weight-light">
-                        <a class="text-decoration-none" href="{{ url_for('edit_user', user_id=user.id) }}">
+                        <a class="text-decoration-none {% if not user.email_check %}text-danger{% endif %}" href="{{ url_for('edit_user', user_id=user.id) }}">
                             {{ user.apartment }} {{ user.name }} {{ user.lastname }} {{ user.phone }}
                         </a>
                         <a class="align-right float-right" href="{{ url_for('note_user', user_id=user.id) }}">
