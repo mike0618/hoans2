@@ -17,7 +17,6 @@ from email.message import Message
 import os
 import re
 import jwt
-from random import randint
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
