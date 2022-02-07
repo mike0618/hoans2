@@ -13,7 +13,7 @@ from bleach import clean
 from functools import wraps
 import smtplib
 from my_conf_google import EMAIL, SMTP_HOST
-from email.message import EmailMessage
+from email.message import EmailMessage, Message
 import os
 import re
 from random import randint
@@ -275,11 +275,12 @@ def about():
 
 
 def send_email(to, subj, html_content):
-    msg = EmailMessage()
+    msg = Message()
     msg['Subject'] = subj
     msg['From'] = EMAIL
     msg['To'] = to
-    msg.add_alternative(html_content, subtype='html')
+    msg['content-type'] = 'text/html'
+    msg.set_payload(html_content, charset='utf-8')
     with smtplib.SMTP(SMTP_HOST, port=587) as conn:
         conn.starttls()
         conn.login(user=EMAIL, password=os.environ.get('PASS'))
