@@ -13,9 +13,10 @@ from bleach import clean
 from functools import wraps
 import smtplib
 from my_conf_google import EMAIL, SMTP_HOST
-from email.message import EmailMessage, Message
+from email.message import Message
 import os
 import re
+import jwt
 from random import randint
 
 app = Flask(__name__)
@@ -406,23 +407,19 @@ email_codes = {}
 
 @app.route("/personal/email")
 def check_email():
-    id = str(current_user.id)
-    code = str(randint(1000, 9999))
-    email_codes[id] = code
+    code = jwt.encode({'email': current_user.email}, app.config.get('SECRET_KEY'), algorithm='HS256')
     content = f"<p><b>Для подтверждения перейдите по ссылке:</b></p>" \
-              f"<a target='_blank' href='{request.url}/check?code={code}&id={id}'>ПОДТВЕРДИТЬ</a>"
+              f"<a target='_blank' href='{url_for('verify_email', code=code, _external=True)}'>ПОДТВЕРДИТЬ</a>"
     send_email(current_user.email, "Подтверждение email для сайта Новосмоленская 2", content)
     flash('Ссылка для подтверждения отправлена на ваш EMAIL.')
     return redirect(url_for('personal'))
 
 
-@app.route("/personal/email/check")
-def verify_email():
-    id = request.args.get('id')
-    code = request.args.get('code')
-    print(code, id, email_codes.get(id))
-    if email_codes.get(id) == code:
-        email_codes.pop(id, None)
+@app.route("/personal/email/<code>")
+def verify_email(code):
+    data = jwt.decode(code, app.config.get('SECRET_KEY'), algorithms=['HS256'])
+    email = data["email"]
+    if current_user.email == email:
         if not current_user.email_check:
             current_user.email_check = True
             if current_user.level == 1:
