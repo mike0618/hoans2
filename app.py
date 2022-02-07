@@ -184,6 +184,19 @@ def news_writer(f):
     return decorated_function
 
 
+def send_email(to, subj, html_content):
+    msg = Message()
+    msg['Subject'] = subj
+    msg['From'] = EMAIL
+    msg['To'] = to
+    msg['content-type'] = 'text/html'
+    msg.set_payload(html_content, charset='utf-8')
+    with smtplib.SMTP(SMTP_HOST, port=587) as conn:
+        conn.starttls()
+        conn.login(user=EMAIL, password=os.environ.get('PASS'))
+        conn.send_message(msg)
+
+
 # ROUTES
 @app.route('/')
 def get_all_posts():
@@ -213,7 +226,7 @@ def register():
         db.session.commit()
         login_user(new_user)
         flash('Подтвердите EMAIL, чтобы активировать аккаунт.')
-        return redirect(url_for('personal'))
+        return redirect(url_for('check_email'))
     return render_template("register.html", form=form)
 
 
@@ -273,19 +286,6 @@ def show_post(post_id):
 @app.route("/about")
 def about():
     return render_template("about.html")
-
-
-def send_email(to, subj, html_content):
-    msg = Message()
-    msg['Subject'] = subj
-    msg['From'] = EMAIL
-    msg['To'] = to
-    msg['content-type'] = 'text/html'
-    msg.set_payload(html_content, charset='utf-8')
-    with smtplib.SMTP(SMTP_HOST, port=587) as conn:
-        conn.starttls()
-        conn.login(user=EMAIL, password=os.environ.get('PASS'))
-        conn.send_message(msg)
 
 
 @app.route("/contact", methods=['GET', 'POST'])
@@ -402,9 +402,6 @@ def personal():
     return redirect(url_for('get_all_posts'))
 
 
-email_codes = {}
-
-
 @app.route("/personal/email")
 def check_email():
     code = jwt.encode({'email': current_user.email}, app.config.get('SECRET_KEY'), algorithm='HS256')
@@ -494,15 +491,17 @@ def note_user(user_id):
 def forgot():
     form = EmailForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
         if not user:
             flash('Этот email не зарегистрирован.', 'error')
             return redirect(url_for('login'))
-        email_codes[user.email] = str(randint(100000000, 999999999))
+        code = jwt.encode({'email': email, 'timestamp': int(datetime.now().timestamp())},
+                          app.config.get('SECRET_KEY'), algorithm='HS256')
         content = f"<p><b>Для восстановления пароля перейдите по одноразовой ссылке:</b></p>" \
-                  f"<a target='_blank' href='{request.url}/reset?email={user.email}&code={email_codes.get(user.email)}'>" \
+                  f"<a target='_blank' href='{request.url}/reset?code={code}'>" \
                   f"СОЗДАТЬ НОВЫЙ ПАРОЛЬ</a>"
-        send_email(user.email, "Восстановление пароля для сайта Новосмоленская 2", content)
+        send_email(email, "Восстановление пароля для сайта Новосмоленская 2", content)
         flash('Ссылка для восстановления отправлена на ваш Email.')
         return redirect(url_for('forgot'))
     return render_template('forgot.html', form=form)
@@ -510,9 +509,11 @@ def forgot():
 
 @app.route("/forgot/reset", methods=['GET', 'POST'])
 def reset_pass():
-    email = request.args.get('email')
     code = request.args.get('code')
-    if email_codes.get(email) == code:
+    data = jwt.decode(code, app.config.get('SECRET_KEY'), algorithms=['HS256'])
+    email = data.get('email')
+    timestamp = data.get('timestamp')
+    if timestamp + 300 > int(datetime.now().timestamp()):
         user = User.query.filter_by(email=email).first()
         form = NewPassForm()
         if form.validate_on_submit():
@@ -522,11 +523,9 @@ def reset_pass():
             user_hash = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=16)
             user.password = user_hash
             db.session.commit()
-            email_codes.pop(email, None)
             login_user(user)
             return redirect(url_for('personal'))
         return render_template('new-pass.html', form=form)
-    email_codes.pop(email, None)
     return redirect(url_for('get_all_posts'))
 
 
