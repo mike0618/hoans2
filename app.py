@@ -198,9 +198,11 @@ def send_email(to, subj, html_content):
 
 # ROUTES
 @app.route('/')
-def get_all_posts():
-    posts = BlogPost.query.order_by(BlogPost.id).all()
-    return render_template("index.html", all_posts=posts)
+# def get_all_posts():
+#     posts = BlogPost.query.order_by(BlogPost.id).all()
+#     return render_template("index.html", all_posts=posts)
+def hello():
+    return redirect("https://nov2.ru/", code=302)
 
 
 @app.route('/register', methods=['GET', 'POST'])
